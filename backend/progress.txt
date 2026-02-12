@@ -116,3 +116,27 @@ Fichiers modifiés:
 - tests/unit/domain/auth/test_session_repository.py (créé)
 
 ---
+
+## 2026-02-12 06:28 PM - US-006: Créer les DTOs d'authentification
+- Créé application/auth/dtos/ avec les 4 DTOs demandés
+- RegisterRequestDto: email (str), password (str), idul (str)
+- LoginRequestDto: email (str), password (str)
+- AuthResponseDto: token (str), expires_at (str ISO), user_id (int), email (str) avec to_dict()
+- UserResponseDto: user_id (int), idul (str), email (str), is_verified (bool), is_active (bool) avec to_dict()
+- Utilise @dataclass comme dans listing/dtos/ avec imports typing pour mypy strict
+- Écrit 11 tests unitaires couvrant création, valeurs variées, et méthodes to_dict()
+- Tous les tests passent (11 tests)
+- Typecheck mypy --strict --explicit-package-bases passe sans erreur
+- **Apprentissages:** Les DTOs utilisent @dataclass avec type hints stricts (Dict[str, Any] pour to_dict()). Les DTOs Request n'ont pas besoin de to_dict() car ils sont créés à partir de requêtes API. Les DTOs Response ont to_dict() pour sérialisation JSON.
+
+Fichiers modifiés:
+- application/auth/__init__.py (créé)
+- application/auth/dtos/__init__.py (créé)
+- application/auth/dtos/register_request_dto.py (créé)
+- application/auth/dtos/login_request_dto.py (créé)
+- application/auth/dtos/auth_response_dto.py (créé)
+- application/auth/dtos/user_response_dto.py (créé)
+- tests/unit/application/auth/__init__.py (créé)
+- tests/unit/application/auth/test_dtos.py (créé)
+
+---
