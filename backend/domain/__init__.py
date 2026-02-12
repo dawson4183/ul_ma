@@ -1,0 +1,1 @@
+"""Couche Domaine - Logique Métier"""

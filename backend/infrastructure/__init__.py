@@ -1,0 +1,1 @@
+"""Couche Infrastructure - Adapters"""
