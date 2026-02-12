@@ -73,3 +73,46 @@ Fichiers modifiés:
 - tests/unit/infrastructure/persistence/mysql/test_base_repository.py (créé)
 
 ---
+
+## 2026-02-12 04:55 PM - US-004: Créer l'interface UserRepository
+- Créé domain/user/user_repository.py avec classe abstraite UserRepository
+- UserRepository hérite de ABC (abstract base class)
+- Méthodes abstraites: find_by_id(), find_by_email(), find_by_idul(), save(), exists_by_email()
+- Retours typés: Optional[User] pour find_*, None pour save, bool pour exists_by_email
+- Documentation complète avec docstrings en français
+- Écrit 18 tests unitaires couvrant:
+  - Les 5 méthodes abstraites doivent être implémentées
+  - Une implémentation concrète complète fonctionne correctement
+  - Cas limites: retour None quand utilisateur non trouvé
+  - Insensibilité à la casse pour les emails
+  - Mise à jour d'utilisateur existant
+- Tous les tests passent (18 tests)
+- Typecheck mypy passe sans erreur
+- **Apprentissages:** Le pattern Repository suit exactement listing_repository.py: ABC avec @abstractmethod, méthodes retournant Optional[Entity] ou bool. L'interface définit le contrat, l'implémentation concrète (ex: MySQL) viendra après.
+
+Fichiers modifiés:
+- domain/user/user_repository.py (créé)
+- tests/unit/domain/user/__init__.py (créé)
+- tests/unit/domain/user/test_user_repository.py (créé)
+
+---
+
+## 2026-02-12 05:25 PM - US-005: Créer l'interface SessionRepository
+- Créé domain/auth/session_repository.py avec classe abstraite SessionRepository
+- Hérite de ABC avec 5 méthodes abstraites: find_by_token(), find_by_user_id(), save(), delete(), mark_as_used()
+- Retours typés: Optional[Session] pour find_by_token(), List[Session] pour find_by_user_id(), None pour les autres
+- Documentation complète avec docstrings en français suivant le pattern hexagonal (Port)
+- Écrit 18 tests unitaires couvrant:
+  - Les 5 méthodes sont bien abstraites (doivent être implémentées)
+  - Implémentation concrète fonctionne correctement
+  - Cas limites: retour None/Liste vide quand non trouvé
+  - Mise à jour de session existante (changement de token)
+- Tous les tests passent (18 tests)
+- Typecheck mypy passe sans erreur (--strict --explicit-package-bases)
+- **Apprentissages:** Le pattern est identique à UserRepository: ABC avec @abstractmethod, retours typés Optional[Entity] ou List[Entity]. Les méthodes métier comme mark_as_used() sont définies dans le repository pour la persistance, mais la logique métier reste dans l'entité Session.
+
+Fichiers modifiés:
+- domain/auth/session_repository.py (créé)
+- tests/unit/domain/auth/test_session_repository.py (créé)
+
+---
