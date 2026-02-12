@@ -1,32 +1,22 @@
-# Journal de Progrès
-Run: 74ce6a23-02b5-4f86-ad5d-31c5d2bdcf6f
-Tâche: TODO 1/13: Configuration Connexion MySQL 8 dans backend Flask avec DDD
-Débuté: 2026-02-12 08:42 AM
 
-## Patterns de Codebase
-- Utilise pytest avec venv pour les tests
-- Architecture DDD: domain/application/infrastructure/api
-- Variables d'environnement supportées pour config (DB_HOST, DB_PORT, etc.)
-
----
-
-## 2026-02-12 08:42 AM - US-001: Créer le module de configuration base de données
-- Créé le dossier infrastructure/database/
-- Créé infrastructure/database/config.py avec classe DatabaseConfig
-- Implémenté les attributs: host, port, user, password, database, charset, autocommit
-- Méthode get_connection_params() retournant un dict
-- Valeurs par défaut: localhost, 3306, root, @Lskdj1220Kevin, ulaval_market
-- Support des variables d'environnement pour toute la configuration
-- Écrit 7 tests unitaires couvrant les valeurs par défaut, personnalisées, env vars
-- Tous les tests passent
-- **Apprentissages:** Le projet utilise pytest avec un venv existant. Les tests sont dans tests/unit/...
+## 2026-02-12 09:02 AM - US-003: Créer le pattern Repository de base pour MySQL
+- Créé infrastructure/persistence/mysql/base_repository.py
+- Classe abstraite BaseMySQLRepository héritant de ABC
+- Constructeur acceptant database_connection de type DatabaseConnection (injection de dépendance)
+- Méthodes utilitaires: _execute_query(), _execute_many(), _fetch_one(), _fetch_all()
+- Gestion automatique des curseurs via with statement (fermeture dans finally)
+- Gestion des transactions: commit() automatique en cas de succès, rollback() en cas d'erreur
+- Conversion des exceptions mysql.connector.Error en DatabaseException
+- Méthodes abstraites: _get_table_name(), _map_to_entity() pour pattern Template Method
+- Écrit 18 tests unitaires couvrant toutes les méthodes utilitaires et la gestion d'erreurs
+- Tous les tests passent (47 tests total)
+- **Apprentissages:** Le repository pattern permet de standardiser l'accès aux données. Les méthodes utilitaires gèrent automatiquement les curseurs et transactions. Les classes concrètes doivent implémenter _get_table_name() et _map_to_entity().
 
 Fichiers modifiés:
-- infrastructure/database/__init__.py (créé)
-- infrastructure/database/config.py (créé)
-- tests/unit/__init__.py (créé)
-- tests/unit/infrastructure/__init__.py (créé)
-- tests/unit/infrastructure/database/__init__.py (créé)
-- tests/unit/infrastructure/database/test_config.py (créé)
+- infrastructure/persistence/mysql/__init__.py (créé)
+- infrastructure/persistence/mysql/base_repository.py (créé)
+- tests/unit/infrastructure/persistence/__init__.py (créé)
+- tests/unit/infrastructure/persistence/mysql/__init__.py (créé)
+- tests/unit/infrastructure/persistence/mysql/test_base_repository.py (créé)
 
 ---
