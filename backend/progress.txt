@@ -1,3 +1,56 @@
+# Journal de Progrès
+Run: f96077e7-75b6-4b7c-9874-9f2b029e6e6c
+Tâche: Implémenter l'API d'authentification JWT
+Débuté: 2026-02-12 11:27 AM
+
+## Patterns de Codebase
+- Architecture DDD avec domain/, application/, infrastructure/, api/
+- Les entités du domaine utilisent des propriétés privées avec getters (ex: _user_id avec @property user_id)
+- Validation métier dans le constructeur avec ValueError pour les erreurs
+- Les méthodes métier modifient l'état directement (ex: verify(), deactivate())
+- Les tests utilisent pytest avec des fixtures pour les données réutilisables
+- mypy pour le typecheck avec --strict
+
+---
+
+## 2026-02-12 11:30 AM - US-001: Créer l'entité User dans le domaine
+- Créé domain/user/user.py avec classe User
+- Attributs: user_id, idul, email, password_hash, is_verified, is_active
+- Validation: email avec '@', idul exactement 7 caractères, champs obligatoires non vides
+- Méthodes métier: can_authenticate(), verify(), deactivate(), activate()
+- Écrit 26 tests unitaires couvrant toutes les validations et méthodes métier
+- Tous les tests passent (26 tests)
+- Typecheck mypy passe sans erreur
+- **Apprentissages:** Le pattern d'entité DDD suit le modèle de Listing: propriétés privées avec getters, validation dans __init__, méthodes métier pour changer l'état. can_authenticate() dépend de deux booléens (is_active ET is_verified).
+
+Fichiers modifiés:
+- domain/user/user.py (créé)
+- tests/unit/domain/user/__init__.py (créé)
+- tests/unit/domain/user/test_user.py (créé)
+
+---
+
+## 2026-02-12 03:21 PM - US-002: Créer l'entité Session dans le domaine
+- Créé domain/auth/session.py avec classe Session
+- Attributs: session_id, user_id, token, token_type, expires_at, used_at
+- Types de token: 'auth', 'email_verification', 'password_reset'
+- Validation: champs obligatoires non vides, token_type doit être valide, dates doivent être datetime
+- Méthodes métier: is_expired(), is_used(), mark_as_used()
+- is_expired() compare expires_at avec datetime.now()
+- is_used() vérifie si used_at est non None
+- mark_as_used() met à jour used_at avec datetime.now()
+- Écrit 22 tests unitaires couvrant toutes les validations et méthodes métier
+- Tous les tests passent (22 tests)
+- Typecheck mypy passe sans erreur
+- **Apprentissages:** La Session suit le même pattern DDD que User avec propriétés privées + getters. Les token types sont définis comme constantes de classe. is_expired() et is_used() sont des méthodes métier simples qui encapsulent la logique de validation.
+
+Fichiers modifiés:
+- domain/auth/session.py (créé)
+- domain/auth/__init__.py (créé)
+- tests/unit/domain/auth/__init__.py (créé)
+- tests/unit/domain/auth/test_session.py (créé)
+
+---
 
 ## 2026-02-12 09:02 AM - US-003: Créer le pattern Repository de base pour MySQL
 - Créé infrastructure/persistence/mysql/base_repository.py

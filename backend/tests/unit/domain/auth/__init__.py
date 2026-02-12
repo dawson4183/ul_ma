@@ -1,0 +1,1 @@
+# Tests pour les entités d'authentification du domaine
