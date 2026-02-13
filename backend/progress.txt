@@ -269,3 +269,60 @@ Fichiers modifiés:
 Commit: 3d132c16
 
 ---
+
+## 2026-02-13 03:54 PM - US-013: Créer les exception mappers pour auth
+- Créé api/exceptions/mappers/auth_exception_mapper.py
+- Fonction register_auth_exception_handlers(app) enregistre tous les handlers
+- UserNotFoundException → HTTP 404 avec code 'USER_NOT_FOUND'
+- InvalidCredentialsException → HTTP 401 avec code 'INVALID_CREDENTIALS'
+- SessionExpiredException → HTTP 401 avec code 'SESSION_EXPIRED'
+- TokenInvalidException → HTTP 401 avec code 'TOKEN_INVALID'
+- Utilise ErrorResponse pour format standardisé des erreurs
+- Écrit 10 tests unitaires couvrant tous les cas (exceptions avec/sans paramètres)
+- Tous les tests passent (348 tests total)
+- Typecheck mypy passe sans erreur (hors erreur préexistante dans error_response.py)
+- **Apprentissages:** Les error handlers Flask doivent retourner un tuple (response, status_code) pour définir le code HTTP. Le décorateur @app.errorhandler() capture automatiquement les exceptions levées.
+
+Fichiers modifiés:
+- api/exceptions/mappers/auth_exception_mapper.py (créé)
+- tests/unit/api/exceptions/mappers/test_auth_exception_mapper.py (créé)
+
+Commit: f557c202
+
+---
+
+## 2026-02-13 05:00 PM - US-014: Créer le AuthResource avec endpoints
+- Créé api/auth_resource.py avec Blueprint 'auth_bp'
+- Implémenté POST /api/auth/register (retourne 201 avec AuthResponseDto)
+  - Validation des données avec AuthDtoValidator
+  - Gestion email déjà existant (409)
+- Implémenté POST /api/auth/login (retourne 200 avec AuthResponseDto)
+  - Propagation de InvalidCredentialsException pour être gérée par l'exception mapper (401)
+- Implémenté GET /api/auth/me avec validation header Authorization: Bearer <token>
+  - Retourne 200 avec UserResponseDto si token valide
+  - Retourne 401 si token manquant (TOKEN_MISSING) ou format invalide (TOKEN_INVALID_FORMAT)
+  - Propagation des exceptions token invalide/expiré pour être gérées par l'exception mapper
+- Implémenté POST /api/auth/logout (retourne 204)
+  - Route supplémentaire pour compléter l'API REST
+- Créé 26 tests unitaires couvrant tous les cas:
+  - Tests pour register (succès 201, validation 400, email existant 409, corps manquant 400)
+  - Tests pour login (succès 200, validation 400, credentials invalides 401)
+  - Tests pour me (succès 200, token manquant 401, format invalide 401, token invalide/expiré)
+  - Tests pour logout (succès 204, token manquant 401, format invalide 401)
+  - Tests pour blueprint (nom, routes enregistrées)
+- Tous les tests passent (26/26)
+- Typecheck mypy passe pour auth_resource.py (hors erreurs préexistantes dans d'autres fichiers)
+- **Apprentissages:**
+  - Le pattern de resource Flask suit listing_resource.py: Blueprint, initialisation des dépendances au module level, gestion des erreurs avec try/except
+  - Les exceptions métier sont propagées (raise) pour être gérées par les @app.errorhandler enregistrés dans auth_exception_mapper
+  - Gestion du header Authorization avec format "Bearer <token>" (insensible à la casse)
+  - Utilisation de UnsupportedMediaType exception pour gérer les requêtes sans Content-Type JSON
+  - Les fonctions de route doivent avoir des annotations de retour Tuple[Any, int] pour mypy strict
+
+Fichiers modifiés:
+- api/auth_resource.py (créé)
+- tests/unit/api/test_auth_resource.py (créé)
+
+Commit: e5c61950
+
+---
