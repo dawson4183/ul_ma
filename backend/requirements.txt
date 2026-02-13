@@ -8,6 +8,7 @@ mysql-connector-python==8.2.0
 # Sécurité
 werkzeug==3.0.1
 bcrypt==4.1.2
+pyjwt==2.8.0
 
 # Injection de dépendances
 dependency-injector==4.41.0
