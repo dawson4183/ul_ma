@@ -164,3 +164,28 @@ Fichiers modifiés:
 - tests/unit/infrastructure/security/test_password_hasher.py (créé)
 
 ---
+## 2026-02-12 08:34 PM - US-008: Créer le JWT Service
+- Créé infrastructure/security/jwt_service.py avec classe JwtService
+- __init__(secret_key): initialise avec clé secrète depuis variables d'environnement
+- generate_token(user_id, email): génère token JWT avec claims user_id, email, exp, iat, type
+- Durée de validité: 24 heures configurée via timedelta(hours=24)
+- validate_token(token): décode et valide le token, retourne payload
+- Lève TokenInvalidException pour token invalide (format, signature)
+- Lève SessionExpiredException pour token expiré (jwt.ExpiredSignatureError)
+- Algorithme: HS256
+- Écrit 23 tests unitaires couvrant:
+  - Initialisation avec clé valide/vide/None
+  - Génération token: format JWT valide, claims présents (user_id, email, exp, iat, type)
+  - Validation token: payload retourné, erreurs pour token invalide/expiré
+  - Gestion des erreurs: ValueError pour paramètres vides, exceptions métier pour tokens invalides
+  - Test d'intégration: générer puis valider plusieurs tokens
+- Tous les tests passent (23 tests)
+- Typecheck mypy --strict passe sans erreur
+- **Apprentissages:** PyJWT encode avec jwt.encode() et decode avec jwt.decode(). Les exceptions jwt.ExpiredSignatureError et jwt.InvalidTokenError doivent être capturées et converties en exceptions métier. Le token expire exactement 24h après la création grâce au claim 'exp'.
+
+Fichiers modifiés:
+- infrastructure/security/jwt_service.py (créé)
+- tests/unit/infrastructure/security/test_jwt_service.py (créé)
+- requirements.txt (ajout pyjwt==2.8.0)
+
+---
