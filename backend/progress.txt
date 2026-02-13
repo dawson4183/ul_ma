@@ -209,3 +209,33 @@ Fichiers modifiés:
 - tests/unit/infrastructure/persistence/mysql/test_mysql_user_repository.py (créé)
 
 ---
+
+## 2026-02-13 12:45 PM - US-011: Créer le AuthService
+- Créé application/auth/auth_service.py avec classe AuthService
+- Injection de dépendances: UserRepository, SessionRepository, PasswordHasher, JwtService
+- Méthodes implémentées:
+  - register(dto): crée un user avec password hashé, retourne AuthResponseDto
+  - login(dto): vérifie credentials, crée session, retourne AuthResponseDto
+  - get_current_user(token): valide JWT et retourne UserResponseDto
+  - logout(token): invalide la session via mark_as_used()
+- Validation métier:
+  - register() lève ValueError si email existe déjà
+  - login() lève InvalidCredentialsException si email/password invalide
+  - login() vérifie can_authenticate() (actif et vérifié)
+- Helper _user_id_to_int(): conversion déterministe string -> int pour JWT claims
+- Écrit 20 tests unitaires couvrant tous les cas (succès, erreurs, edge cases)
+- Tous les tests passent (20 tests)
+- **Apprentissages:**
+  - Le service d'application orchestre les repositories et services de sécurité
+  - Les exceptions métier du domaine sont propagées au consommateur (API)
+  - La conversion user_id -> int doit fonctionner avec n'importe quel format (UUID ou simple)
+  - Les sessions sont créées avec token_type='auth' et expires_at=24h
+  - La méthode logout est idempotente (pas d'erreur si session inexistante)
+
+Fichiers modifiés:
+- application/auth/auth_service.py (créé)
+- tests/unit/application/auth/test_auth_service.py (créé)
+
+Commit: 61f7302c
+
+---
