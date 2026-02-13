@@ -239,3 +239,33 @@ Fichiers modifiés:
 Commit: 61f7302c
 
 ---
+
+---
+
+## 2026-02-13 02:52 PM - US-012: Créer les validators pour l'API auth
+- Créé api/validators/auth_dto_validator.py avec classe AuthDtoValidator
+- Méthodes statiques: validate_register(data) et validate_login(data)
+- validate_register() vérifie:
+  - Email contient '@'
+  - Password a au moins 8 caractères
+  - Idul a exactement 7 caractères
+  - Tous les champs sont requis
+- validate_login() vérifie:
+  - Email est présent et non vide
+  - Password est présent et non vide
+- Lève ValueError avec message descriptif si validation échoue
+- Retourne liste d'erreurs vide si tout est valide
+- Écrit 20 tests unitaires couvrant tous les cas (succès, erreurs, edge cases)
+- Tous les tests passent (20 tests)
+- Typecheck mypy --strict passe sans erreur
+- **Apprentissages:** Les validators API valident les données entrantes avant de les passer au service d'application. Ils servent de première ligne de défense pour rejeter les données invalides rapidement. Le pattern est similaire à ListingDtoValidator mais avec des règles spécifiques à l'authentification.
+
+Fichiers modifiés:
+- api/validators/auth_dto_validator.py (créé)
+- tests/unit/api/__init__.py (créé)
+- tests/unit/api/validators/__init__.py (créé)
+- tests/unit/api/validators/test_auth_dto_validator.py (créé)
+
+Commit: 3d132c16
+
+---
