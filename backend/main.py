@@ -61,10 +61,20 @@ def create_app():
     app.register_blueprint(listing_bp, url_prefix='/api')
     logger.info("Blueprint 'listings' enregistré")
     
+    # Enregistrer le blueprint auth
+    from api.auth_resource import auth_bp
+    app.register_blueprint(auth_bp, url_prefix='/api')
+    logger.info("Blueprint 'auth' enregistré")
+    
     # Enregistrer les exception handlers
     from api.exceptions.mappers.listing_exception_mapper import register_listing_exception_handlers
     register_listing_exception_handlers(app)
-    logger.info("Exception handlers enregistrés")
+    logger.info("Exception handlers listings enregistrés")
+    
+    # Enregistrer les exception handlers pour auth
+    from api.exceptions.mappers.auth_exception_mapper import register_auth_exception_handlers
+    register_auth_exception_handlers(app)
+    logger.info("Exception handlers auth enregistrés")
     
     return app
 
