@@ -140,3 +140,27 @@ Fichiers modifiés:
 - tests/unit/application/auth/test_dtos.py (créé)
 
 ---
+
+## 2026-02-12 07:30 PM - US-007: Créer le PasswordHasher service
+- Créé infrastructure/security/password_hasher.py avec classe PasswordHasher
+- Méthodes: hash_password(password) -> str, verify_password(password, hash) -> bool
+- hash_password utilise bcrypt avec salt automatique (gensalt())
+- verify_password compare le mot de passe avec le hash stocké
+- Gestion des erreurs: ValueError pour paramètres vides/None, RuntimeError pour erreurs bcrypt
+- verify_password retourne False pour un hash invalide (sans lever d'exception)
+- Écrit 14 tests unitaires couvrant:
+  - hash_password retourne un string bcrypt valide
+  - Deux hash du même password sont différents (salt aléatoire)
+  - verify_password retourne True pour match, False pour mismatch
+  - Gestion des erreurs (paramètres vides/None, hash invalide)
+  - Test d'intégration avec différents types de mots de passe
+- Tous les tests passent (14 tests)
+- Typecheck mypy --strict passe sans erreur
+- **Apprentissages:** bcrypt.hashpw() génère automatiquement un salt aléatoire avec gensalt(). bcrypt.checkpw() retourne un booléen. Les erreurs de bcrypt doivent être capturées et converties en exceptions appropriées. C'est un service d'infrastructure (pas métier) qui encapsule la librairie de cryptographie.
+
+Fichiers modifiés:
+- infrastructure/security/password_hasher.py (créé)
+- tests/unit/infrastructure/security/__init__.py (créé)
+- tests/unit/infrastructure/security/test_password_hasher.py (créé)
+
+---
