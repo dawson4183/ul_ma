@@ -189,3 +189,23 @@ Fichiers modifiés:
 - requirements.txt (ajout pyjwt==2.8.0)
 
 ---
+
+## 2026-02-13 09:36 AM - US-009: Implémenter MySQLUserRepository
+- Créé infrastructure/persistence/mysql/mysql_user_repository.py
+- MySQLUserRepository hérite de BaseMySQLRepository et implémente UserRepository
+- _get_table_name() retourne 'users'
+- _map_to_entity() convertit dict en User avec gestion des booléens MySQL (0/1)
+- find_by_id() utilise WHERE user_id = %s
+- find_by_email() utilise WHERE email = %s (insensible à la casse)
+- find_by_idul() utilise WHERE idul = %s
+- save() INSERT si nouvel user, UPDATE si existant (vérifie existence d'abord)
+- exists_by_email() utilise SELECT 1 LIMIT 1 pour vérifier l'existence
+- Écrit 18 tests unitaires couvrant toutes les méthodes et cas limites
+- Tous les tests passent (80 tests total pour user + mysql)
+- **Apprentissages:** Le pattern Template Method de BaseMySQLRepository fonctionne bien: _get_table_name() et _map_to_entity() sont implémentés par les classes filles. Les requêtes utilisent des paramètres %s pour éviter les injections SQL. bool() convertit les entiers MySQL (0/1) en booléens Python.
+
+Fichiers modifiés:
+- infrastructure/persistence/mysql/mysql_user_repository.py (créé)
+- tests/unit/infrastructure/persistence/mysql/test_mysql_user_repository.py (créé)
+
+---
